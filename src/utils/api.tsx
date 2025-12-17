@@ -1,9 +1,8 @@
 export const getQuestion = async () => {
-    try {
-        const data = await fetch('https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple');
-        const response = data.json();
-        return response;
-    } catch (e) {
-        return e;
-    }
+    const data = await fetch('https://opentdb.com/api.php?amount=1&type=multiple');
+
+    if (!data.ok) throw new Error("Error fetching data");
+
+    const response = await data.json();
+    return response.results[0]
 }
