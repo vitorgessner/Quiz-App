@@ -13,18 +13,21 @@ export const Answers = ({ quizState, setQuizState }: AnswersProps) => {
 }
 
 const Card = ({ text, quizState, setQuizState }: CardProps) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+    const decodedString = doc.body.textContent;
+
     return (
         <article className={quizState.isAnswered ? (text === quizState.correct_answer ? 'border-green-500' : 'border-red-500') : 'border-white'}>
             <button
                 onClick={() => {
-                    console.log(text, quizState.correct_answer)
                     if (text === quizState.correct_answer) {
                         setQuizState((prev) => ({ ...prev, isAnswered: true, isCorrect: true }))
                     } else {
                         setQuizState((prev) => ({ ...prev, isAnswered: true, isCorrect: false }))
                     }
                 }}>
-                {text}
+                {decodedString}
             </button>
         </article>
     )

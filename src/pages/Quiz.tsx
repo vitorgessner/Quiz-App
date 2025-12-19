@@ -62,7 +62,7 @@ export default function Quiz() {
                     <Answers quizState={quizState} setQuizState={setQuizState} />
                     <Timer quizState={quizState} setQuizState={setQuizState} />
                     <NextQuiz quizState={quizState} setQuizState={setQuizState} refetch={refetch}/>
-                    <Link to="/" className="absolute left-1 top-1 p-1 w-fit opacity-70"><ArrowLeft size={15}/></Link>
+                    {quizState.isAnswered && <Link to="/" className="absolute left-1 top-1 p-1 w-fit opacity-70"><ArrowLeft size={15}/></Link>}
                 </div>
             )}
         </main>
