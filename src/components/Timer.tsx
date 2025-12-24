@@ -1,16 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Timer } from 'lucide-react';
 import type { TimerProps } from '../types/QuizTypes';
 
 export const TimerComponent = ({quizState, setQuizState} : TimerProps) => {
-    const [time, setTime] = useState<number>(15);
-    const timerRef = useRef<number | null>(null);
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         setQuizState((prev) => ({...prev, isAnswered: false}));
         if (!timerRef.current) {
             timerRef.current = setInterval(() => {
-                setTime((prev) => prev - 1);
+                setQuizState((prev) => ({...prev, timer: prev.timer - 1}));
             }, 1000)
         }
 
@@ -20,7 +19,7 @@ export const TimerComponent = ({quizState, setQuizState} : TimerProps) => {
             setQuizState((prev) => ({...prev, isAnswered: true}))
         }
 
-        if (time < 1 && timerRef.current) {
+        if (quizState.timer < 1 && timerRef.current) {
             clearInterval(timerRef.current);
             timerRef.current = null;
             setQuizState((prev) => ({...prev, isAnswered: true, isCorrect: false}));
@@ -32,13 +31,13 @@ export const TimerComponent = ({quizState, setQuizState} : TimerProps) => {
             timerRef.current = null;
             setQuizState((prev) => ({...prev, isAnswered: true, isCorrect: false}))
         }
-    }, [time, quizState.isAnswered, setQuizState])
+    }, [quizState.timer, quizState.isAnswered, setQuizState])
 
 
 
     return (
         <p className="mt-8 flex items-center gap-1 justify-center"><Timer stroke="white" />
-        {time}
+        {quizState.timer}
         </p>
     )
 }

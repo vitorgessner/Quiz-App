@@ -1,5 +1,3 @@
-import type { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
-
 export type QuizStateProps = {
     isAnswered: boolean;
     isCorrect: boolean | null;
@@ -7,11 +5,9 @@ export type QuizStateProps = {
     correct_answer: string | null;
     category: string | null;
     question: string | null;
+    questionNumber: number;
+    timer: number;
 };
-
-export type QueryData = {
-    results: Array<QueryDataResults>;
-}
 
 export type QueryDataResults = {
     type: string,
@@ -41,6 +37,4 @@ export type CardProps = {
 export type NextQuizProps = {
     quizState: QuizStateProps,
     setQuizState: React.Dispatch<React.SetStateAction<QuizStateProps>>,
-    refetch: (options?: RefetchOptions) => Promise<QueryObserverResult<QueryDataResults, Error>>,
-    // cb: () => void;
 }

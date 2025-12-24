@@ -17,41 +17,47 @@ export default function Quiz() {
         answers: [],
         correct_answer: null,
         category: null,
-        question: null
+        question: null,
+        questionNumber: 0,
+        timer: 15
     });
 
-    const { data, isLoading, error, refetch, isRefetching } = useQuery<QueryDataResults>({
+    const { data, isLoading, error, isRefetching } = useQuery<Array<QueryDataResults>>({
         queryKey: ['question'],
         queryFn: getQuestion
     })
 
     const setAnswersArray = useCallback(() => {
-        const answersArray: Array<string> | null = []
+        let currentQuestion: QueryDataResults;
+
         if (data) {
-            data.incorrect_answers.map((answer: string) => {
+            currentQuestion = data[quizState.questionNumber];
+            const answersArray: Array<string> | null = []
+            currentQuestion.incorrect_answers.map((answer: string) => {
                 answersArray.push(answer);
             })
-            answersArray.push(data.correct_answer);
+            answersArray.push(currentQuestion.correct_answer);
             answersArray.sort()
 
             if (quizState.answers.length === 0 && !quizState.correct_answer) {
                 setQuizState({
                     ...quizState,
-                    category: data.category,
-                    question: data.question,
+                    category: currentQuestion.category,
+                    question: currentQuestion.question,
                     answers: answersArray ?? [],
-                    correct_answer: data.correct_answer
+                    correct_answer: currentQuestion.correct_answer
                 })
             }
         }
     }, [data, quizState]);
 
-    if (isRefetching) return <h2 className='text-center mt-5'>Loading question...</h2>
     setAnswersArray();
 
-    if (isLoading) return <h2 className='text-center mt-5'>Loading question...</h2>
+    if (isRefetching) return <h2 className='text-center mt-5'>Loading questions...</h2>
 
-    if (error) return <h2 className='text-center mt-5'>Error loading question: error.message</h2>
+    if (isLoading) return <h2 className='text-center mt-5'>Loading questions...</h2>
+
+    if (error) return <h2 className='text-center mt-5'>Error loading questions: error.message</h2>
 
     return (
         <main>
@@ -61,8 +67,8 @@ export default function Quiz() {
                     <Question quizState={quizState} />
                     <Answers quizState={quizState} setQuizState={setQuizState} />
                     <Timer quizState={quizState} setQuizState={setQuizState} />
-                    <NextQuiz quizState={quizState} setQuizState={setQuizState} refetch={refetch}/>
-                    {quizState.isAnswered && <Link to="/" className="absolute left-1 top-1 p-1 w-fit opacity-70"><ArrowLeft size={15}/></Link>}
+                    <NextQuiz quizState={quizState} setQuizState={setQuizState}/>
+                    {quizState.isAnswered && <Link to="/" className="absolute left-1 top-1 p-1 w-fit opacity-70"><ArrowLeft size={15} /></Link>}
                 </div>
             )}
         </main>
