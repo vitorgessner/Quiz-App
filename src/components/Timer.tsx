@@ -22,7 +22,13 @@ export const TimerComponent = ({quizState, setQuizState} : TimerProps) => {
         if (quizState.timer < 1 && timerRef.current) {
             clearInterval(timerRef.current);
             timerRef.current = null;
-            setQuizState((prev) => ({...prev, isAnswered: true, isCorrect: false}));
+            setQuizState((prev) => ({...prev, isAnswered: true, isCorrect: false, 
+                score: { ...prev.score, 
+                    [prev.category]: { ...prev.score[prev.category], 
+                        incorrect: prev.score[prev.category].incorrect + 1
+                    }
+                }
+            }));
         }
 
         return () => {

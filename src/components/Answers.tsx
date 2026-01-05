@@ -1,4 +1,5 @@
 import type { AnswersProps, CardProps } from "../types/QuizTypes"
+import { decodeHtml } from "../utils/decodeHtml"
 
 export const Answers = ({ quizState, setQuizState }: AnswersProps) => {
     return (
@@ -12,6 +13,34 @@ export const Answers = ({ quizState, setQuizState }: AnswersProps) => {
     )
 }
 
+const handleClick = ({text, quizState, setQuizState } : CardProps) => {
+    if (text === quizState.correct_answer) {
+        setQuizState(prev => { 
+            const category = decodeHtml(prev.category);
+
+            const categoryScore = prev.score[category] ?? {
+                correct: 0,
+                incorrect: 0
+            }
+            return {...prev, isAnswered: true, isCorrect: true, 
+            score: { ...prev.score, 
+                [category]: { ...categoryScore, 
+                    correct: categoryScore.correct + 1 } } }})
+    } else {
+        setQuizState(prev => { 
+            const category = decodeHtml(prev.category);
+
+            const categoryScore = prev.score[category] ?? {
+                correct: 0,
+                incorrect: 0
+            }
+            return {...prev, isAnswered: true, isCorrect: true, 
+            score: { ...prev.score, 
+                [category]: { ...categoryScore, 
+                    incorrect: categoryScore.incorrect + 1 } } }})
+    }
+}
+
 const Card = ({ text, quizState, setQuizState }: CardProps) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(text, 'text/html');
@@ -19,16 +48,7 @@ const Card = ({ text, quizState, setQuizState }: CardProps) => {
 
     return (
         <article className={quizState.isAnswered ? (text === quizState.correct_answer ? 'border-green-500' : 'border-red-500') : 'border-white'}>
-            <button
-                onClick={() => {
-                    if (text === quizState.correct_answer) {
-                        setQuizState((prev) => ({ ...prev, isAnswered: true, isCorrect: true }))
-                    } else {
-                        setQuizState((prev) => ({ ...prev, isAnswered: true, isCorrect: false }))
-                    }
-                }}>
-                {decodedString}
-            </button>
+            <button onClick={() => handleClick({ text, quizState, setQuizState })}>{decodedString}</button>
         </article>
     )
 }

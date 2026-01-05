@@ -64,8 +64,8 @@ export default function Quiz() {
     return (
         <main>
             {data && (
-                <div className='mx-9'>
-                    <main>
+                <div className='mx-9 xl:flex xl:gap-4 xl:justify-between'>
+                    <main className='xl:grow xl:max-w-200 xl:mx-auto md:w-fit md:mx-auto'>
                         <Category quizState={quizState} />
                         <Question quizState={quizState} />
                         <Answers quizState={quizState} setQuizState={setQuizState} />
@@ -73,7 +73,7 @@ export default function Quiz() {
                         <NextQuiz quizState={quizState} setQuizState={setQuizState} />
                         {quizState.isAnswered && <Link to="/" className="absolute left-1 top-1 p-1 w-fit opacity-70"><ArrowLeft size={15} /></Link>}
                     </main>
-                    <aside>
+                    <aside className='md:mx-auto md:w-max xl:my-4'>
                         <Scoreboard quizState={quizState} setQuizState={setQuizState}/>
                     </aside>
                 </div>

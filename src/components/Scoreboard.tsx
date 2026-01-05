@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getCategories } from '../utils/api';
 import type { CategoryDataResults, ScoreboardProps } from '../types/ScoreboardTypes';
 import { useEffect } from 'react';
+import { decodeHtml } from '../utils/decodeHtml';
 
 export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
     const { data: categories, isLoading, error, isRefetching } = useQuery<Array<CategoryDataResults>>({
@@ -13,19 +14,35 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
         if (!categories) return;
     
         setQuizState(prev => {
-            if (prev.score !== null) return prev;
-    
-            const initialScore = categories.reduce((acc, category) => {
-                acc[category.name] = { correct: 0, incorrect: 0 };
-                return acc;
-            }, {} as Record<string, { correct: number; incorrect: number }>);
-    
+            let score = prev.score;
+          
+            if (!score) {
+              score = localStorage.getItem('score')
+                ? JSON.parse(localStorage.getItem('score')!)
+                : {};
+            }
+          
+            const mergedScore = { ...score };
+          
+            categories.forEach(category => {
+                const decodedCategory = decodeHtml(category.name);
+              if (!mergedScore[decodedCategory]) {
+                mergedScore[decodedCategory] = { correct: 0, incorrect: 0 };
+              }
+            });
+          
             return {
-                ...prev,
-                score: initialScore,
+              ...prev,
+              score: mergedScore
             };
-        });
+          });
     }, [categories, setQuizState]);
+
+    useEffect(() => {
+        if (quizState.score) {
+        localStorage.setItem('score', JSON.stringify(quizState.score))
+        }
+    }, [quizState.score])
 
     if (error) {
         return <span>Error fetching categories: {error.message}</span>
@@ -40,7 +57,7 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
     }
 
     return (
-        <div className="p-2 my-4 rounded-md">
+        <div className="my-4 w-fit border rounded-md md:grow">
             <table>
                 <thead>
                     <tr>
