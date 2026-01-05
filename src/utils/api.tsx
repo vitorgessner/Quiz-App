@@ -6,7 +6,16 @@ export const getQuestion = async () => {
     if (!data.ok) throw new Error("Error fetching data");
 
     const response = await data.json();
-    return response.results
+    return response.results;
+}
+
+export const getCategories = async () => {
+    const data = await fetch('https://opentdb.com/api_category.php');
+
+    if (!data.ok) throw new Error("Error fetching data");
+
+    const response = await data.json();
+    return response.trivia_categories;
 }
 
 // export const getQuestion = async ({number} : { number: number }) => {

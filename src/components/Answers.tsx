@@ -2,9 +2,9 @@ import type { AnswersProps, CardProps } from "../types/QuizTypes"
 
 export const Answers = ({ quizState, setQuizState }: AnswersProps) => {
     return (
-        <div className='grid grid-cols-2 gap-4 mx-9'>
+        <div className='grid grid-cols-2 gap-4'>
             {quizState.answers.map((answer : string) => {
-                if (answer === quizState.correct_answer) return <Card text={answer} quizState={quizState} setQuizState={setQuizState} />
+                if (answer === quizState.correct_answer) return <Card text={answer} quizState={quizState} setQuizState={setQuizState}/>
                 return <Card text={answer} quizState={quizState} setQuizState={setQuizState}/>
             }
             )}

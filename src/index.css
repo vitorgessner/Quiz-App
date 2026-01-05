@@ -22,4 +22,7 @@
     button {
         @apply hover:cursor-pointer block w-full text-left
     }
+    table, th, td {
+        @apply border-collapse border-2 py-1 px-4 rounded-md
+    }
 }

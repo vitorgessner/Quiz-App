@@ -9,6 +9,7 @@ import { getQuestion } from '../utils/api';
 import type { QuizStateProps, QueryDataResults } from '../types/QuizTypes';
 import { Link } from 'react-router';
 import { ArrowLeft } from 'lucide-react'
+import { Scoreboard } from '../components/Scoreboard';
 
 export default function Quiz() {
     const [quizState, setQuizState] = useState<QuizStateProps>({
@@ -19,7 +20,8 @@ export default function Quiz() {
         category: null,
         question: null,
         questionNumber: 0,
-        timer: 15
+        timer: 15,
+        score: null,
     });
 
     const { data, isLoading, error, isRefetching } = useQuery<Array<QueryDataResults>>({
@@ -62,13 +64,18 @@ export default function Quiz() {
     return (
         <main>
             {data && (
-                <div>
-                    <Category quizState={quizState} />
-                    <Question quizState={quizState} />
-                    <Answers quizState={quizState} setQuizState={setQuizState} />
-                    <Timer quizState={quizState} setQuizState={setQuizState} />
-                    <NextQuiz quizState={quizState} setQuizState={setQuizState}/>
-                    {quizState.isAnswered && <Link to="/" className="absolute left-1 top-1 p-1 w-fit opacity-70"><ArrowLeft size={15} /></Link>}
+                <div className='mx-9'>
+                    <main>
+                        <Category quizState={quizState} />
+                        <Question quizState={quizState} />
+                        <Answers quizState={quizState} setQuizState={setQuizState} />
+                        <Timer quizState={quizState} setQuizState={setQuizState} />
+                        <NextQuiz quizState={quizState} setQuizState={setQuizState} />
+                        {quizState.isAnswered && <Link to="/" className="absolute left-1 top-1 p-1 w-fit opacity-70"><ArrowLeft size={15} /></Link>}
+                    </main>
+                    <aside>
+                        <Scoreboard quizState={quizState} setQuizState={setQuizState}/>
+                    </aside>
                 </div>
             )}
         </main>
