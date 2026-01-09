@@ -29,3 +29,25 @@
         @apply md:w-max
     }
 }
+
+@layer components {
+    .filterIcon {
+        @apply inline top-4.5 md:top-1.5 absolute left-1.5
+    }
+
+    .timer {
+        @apply mt-8 flex items-center gap-1 justify-center
+    }
+
+    .main {
+        @apply xl:grow xl:max-w-200 xl:mx-auto md:w-fit md:mx-auto
+    }
+
+    .mainDivContainer {
+        @apply mx-9 xl:flex xl:gap-4 xl:justify-between
+    }
+
+    .nextQuiz {
+        @apply absolute left-1 top-1 p-1 w-fit opacity-70
+    }
+}

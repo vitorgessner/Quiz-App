@@ -45,7 +45,7 @@ export const TimerComponent = ({quizState, setQuizState} : TimerProps) => {
 
 
     return (
-        <p className="mt-8 flex items-center gap-1 justify-center"><Timer stroke="white" />
+        <p className="timer"><Timer stroke="white" />
         {quizState.timer}
         </p>
     )

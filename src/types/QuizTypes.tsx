@@ -24,18 +24,10 @@ export type TimerProps = {
     setQuizState: React.Dispatch<React.SetStateAction<QuizStateProps>>
 }
 
-export type AnswersProps = {
-    quizState: QuizStateProps
-    setQuizState: React.Dispatch<React.SetStateAction<QuizStateProps>>
-}
+export type AnswersProps = TimerProps
 
-export type CardProps = {
+export type CardProps = TimerProps & {
     text: string;
-    quizState: QuizStateProps;
-    setQuizState: React.Dispatch<React.SetStateAction<QuizStateProps>>;
 }
 
-export type NextQuizProps = {
-    quizState: QuizStateProps,
-    setQuizState: React.Dispatch<React.SetStateAction<QuizStateProps>>,
-}
+export type NextQuizProps = TimerProps
