@@ -5,8 +5,8 @@ export const Answers = ({ quizState, setQuizState }: AnswersProps) => {
     return (
         <div className='grid grid-cols-2 gap-4'>
             {quizState.answers.map((answer : string) => {
-                if (answer === quizState.correct_answer) return <Card text={answer} quizState={quizState} setQuizState={setQuizState}/>
-                return <Card text={answer} quizState={quizState} setQuizState={setQuizState}/>
+                if (answer === quizState.correct_answer) return <Card key={answer} text={answer} quizState={quizState} setQuizState={setQuizState}/>
+                return <Card key={answer} text={answer} quizState={quizState} setQuizState={setQuizState}/>
             }
             )}
         </div>
@@ -48,8 +48,8 @@ const handleClick = ({text, quizState, setQuizState } : CardProps) => {
 const Card = ({ text, quizState, setQuizState }: CardProps) => {
     const decodedString = decodeHtml(text);
     return (
-        <article className={quizState.isAnswered ? (text === quizState.correct_answer ? 'border-green-500' : 'border-red-500') : 'border-white'}>
-            <button onClick={() => handleClick({ text, quizState, setQuizState })}>{decodedString}</button>
+        <article className={quizState.isAnswered ? (text === quizState.correct_answer ? 'border-green-500 opacity-70' : 'border-red-500 opacity-70') : 'border-gray-400'}>
+            <button className="cardButton" disabled={quizState.isAnswered} onClick={() => handleClick({ text, quizState, setQuizState })}>{decodedString}</button>
         </article>
     )
 }

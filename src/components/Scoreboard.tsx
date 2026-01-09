@@ -60,7 +60,8 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
     }
 
     return (
-        <div className="my-4 w-fit border rounded-md md:grow">
+        <div className="my-4 w-fit rounded-md md:grow">
+            <span className='text-sm opacity-70 ml-1 block mb-1'>Click on the category header to filter</span>
             <table>
                 <thead>
                     <tr>
@@ -82,7 +83,7 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
                                 return setFilterState(null);
                             }
                         }
-                            className='relative cursor-pointer'
+                            className='relative cursor-pointer selection:bg-gray-700 selection:text-white'
                         >
                             {filterState === 'filtered' ? <span><ArrowUpAZ size={20} className='filterIcon' /></span> : 
                             filterState === 'inverted' ? <span><ArrowDownAZ size={20} className='filterIcon' /></span> : null}Category

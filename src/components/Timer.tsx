@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Timer } from 'lucide-react';
 import type { TimerProps } from '../types/QuizTypes';
+import { decodeHtml } from '../utils/decodeHtml';
 
 export const TimerComponent = ({quizState, setQuizState} : TimerProps) => {
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -24,11 +25,13 @@ export const TimerComponent = ({quizState, setQuizState} : TimerProps) => {
             timerRef.current = null;
             setQuizState(prev => {
                 if (!prev.category || !prev.score) return prev;
+
+                const decodedCategory = decodeHtml(prev.category);
                 
                 return {...prev, isAnswered: true, 
                 score: { ...prev.score, 
-                    [prev.category]: { ...prev.score[prev.category], 
-                        incorrect: prev.score[prev.category].incorrect + 1
+                    [decodedCategory]: { ...prev.score[decodedCategory], 
+                        incorrect: prev.score[decodedCategory].incorrect + 1
                     }
                 }
             }});
