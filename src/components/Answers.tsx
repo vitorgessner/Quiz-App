@@ -16,25 +16,29 @@ export const Answers = ({ quizState, setQuizState }: AnswersProps) => {
 const handleClick = ({text, quizState, setQuizState } : CardProps) => {
     if (text === quizState.correct_answer) {
         setQuizState(prev => { 
-            const category = decodeHtml(prev.category);
+            const category = prev.category && decodeHtml(prev.category);
+            if (!category) return prev;
+            if (!prev.score) return prev;
 
             const categoryScore = prev.score[category] ?? {
                 correct: 0,
                 incorrect: 0
             }
-            return {...prev, isAnswered: true, isCorrect: true, 
+            return {...prev, isAnswered: true, 
             score: { ...prev.score, 
                 [category]: { ...categoryScore, 
                     correct: categoryScore.correct + 1 } } }})
     } else {
         setQuizState(prev => { 
-            const category = decodeHtml(prev.category);
+            const category = prev.category && decodeHtml(prev.category);
+            if (!category) return prev;
+            if (!prev.score) return prev;
 
             const categoryScore = prev.score[category] ?? {
                 correct: 0,
                 incorrect: 0
             }
-            return {...prev, isAnswered: true, isCorrect: true, 
+            return {...prev, isAnswered: true, 
             score: { ...prev.score, 
                 [category]: { ...categoryScore, 
                     incorrect: categoryScore.incorrect + 1 } } }})
@@ -42,10 +46,7 @@ const handleClick = ({text, quizState, setQuizState } : CardProps) => {
 }
 
 const Card = ({ text, quizState, setQuizState }: CardProps) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(text, 'text/html');
-    const decodedString = doc.body.textContent;
-
+    const decodedString = decodeHtml(text);
     return (
         <article className={quizState.isAnswered ? (text === quizState.correct_answer ? 'border-green-500' : 'border-red-500') : 'border-white'}>
             <button onClick={() => handleClick({ text, quizState, setQuizState })}>{decodedString}</button>

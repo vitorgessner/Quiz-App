@@ -22,18 +22,18 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
                 : {};
             }
           
-            const mergedScore = { ...score };
-          
-            categories.forEach(category => {
-                const decodedCategory = decodeHtml(category.name);
-              if (!mergedScore[decodedCategory]) {
-                mergedScore[decodedCategory] = { correct: 0, incorrect: 0 };
-              }
-            });
+            if (score) {
+                categories.forEach(category => {
+                    const decodedCategory = decodeHtml(category.name);
+                  if (!score[decodedCategory]) {
+                    score[decodedCategory] = { correct: 0, incorrect: 0 };
+                  }
+                });
+            }
           
             return {
               ...prev,
-              score: mergedScore
+              score: score
             };
           });
     }, [categories, setQuizState]);
@@ -71,9 +71,9 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
                     {categories && categories?.map((category) => {
                         return (<tr key={category.id}>
                             <td>{category.name}</td>
-                            <td className="text-green-400 border-white">{quizState.score && quizState.score[category.name].correct}</td>
-                            <td className="text-red-400 border-white">{quizState.score && quizState.score[category.name].incorrect}</td>
-                            <td>{quizState.score && quizState.score[category.name].correct + quizState.score[category.name].incorrect}</td>
+                            {quizState.score && <><td className="text-green-400 border-white">{quizState.score[category.name].correct}</td>
+                            <td className="text-red-400 border-white">{quizState.score[category.name].incorrect}</td>
+                            <td>{quizState.score[category.name].correct + quizState.score[category.name].incorrect}</td></>}
                         </tr>)
                     })}
                 </tbody>
