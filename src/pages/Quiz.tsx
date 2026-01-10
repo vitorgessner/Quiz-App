@@ -10,6 +10,7 @@ import type { QuizStateProps, QueryDataResults } from '../types/QuizTypes';
 import { Link } from 'react-router';
 import { ArrowLeft } from 'lucide-react'
 import { Scoreboard } from '../components/Scoreboard';
+import { CategorySelection } from '../components/CategorySelection';
 
 export default function Quiz() {
     const [quizState, setQuizState] = useState<QuizStateProps>({
@@ -22,11 +23,12 @@ export default function Quiz() {
         questionNumber: 0,
         timer: 15,
         score: null,
+        categoryId: null,
     });
 
     const { data, isLoading, error, isRefetching } = useQuery<Array<QueryDataResults>>({
         queryKey: ['question'],
-        queryFn: getQuestion
+        queryFn: () => quizState.categoryId ? getQuestion(quizState.categoryId) : getQuestion()
     })
 
     const setAnswersArray = useCallback(() => {
@@ -53,13 +55,15 @@ export default function Quiz() {
         }
     }, [data, quizState]);
 
+    console.log(quizState.categoryId)
+
     setAnswersArray();
 
     if (isRefetching) return <h2 className='text-center mt-5'>Loading questions...</h2>
 
     if (isLoading) return <h2 className='text-center mt-5'>Loading questions...</h2>
 
-    if (error) return <h2 className='text-center mt-5'>Error loading questions: error.message</h2>
+    if (error) return <h2 className='text-center mt-5'>Error loading questions: {error.message}</h2>
 
     return (
         <main>
@@ -72,6 +76,7 @@ export default function Quiz() {
                         <Timer quizState={quizState} setQuizState={setQuizState} />
                         <NextQuiz quizState={quizState} setQuizState={setQuizState} />
                         {quizState.isAnswered && <Link to="/" className="nextQuiz"><ArrowLeft size={15} /></Link>}
+                        <CategorySelection quizState={quizState} setQuizState={setQuizState}/>
                     </main>
                     <aside className='md:mx-auto md:w-max xl:my-4'>
                         <Scoreboard quizState={quizState} setQuizState={setQuizState}/>

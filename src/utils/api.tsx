@@ -1,5 +1,6 @@
-export const getQuestion = async () => {
-    const data = await fetch('https://opentdb.com/api.php?amount=50&type=multiple');
+export const getQuestion = async (category? : number) => {
+    const data = category ? await fetch(`https://opentdb.com/api.php?amount=50&type=multiple&category=${category}`) : 
+    await fetch(`https://opentdb.com/api.php?amount=50&type=multiple`)
 
     if (!data.ok) throw new Error("Error fetching data");
 

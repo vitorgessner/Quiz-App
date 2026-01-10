@@ -7,7 +7,8 @@ export type QuizStateProps = {
     question: string | null;
     questionNumber: number;
     timer: number;
-    score: Record<string, Record<string, number>> | null
+    score: Record<string, Record<string, number>> | null;
+    categoryId: number | null 
 };
 
 export type QueryDataResults = {

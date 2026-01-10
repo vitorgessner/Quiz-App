@@ -61,7 +61,7 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
 
     return (
         <div className="my-4 w-fit rounded-md md:grow">
-            <span className='text-sm opacity-70 ml-1 block mb-1'>Click on the category header to filter</span>
+            <span className='text-sm opacity-70 ml-1 block mb-1'>Click on the category header to filter alphabetically</span>
             <table>
                 <thead>
                     <tr>
