@@ -1,3 +1,5 @@
+import type React from "react";
+
 export type QuizStateProps = {
     isAnswered: boolean;
     isCorrect: boolean | null;
@@ -21,14 +23,34 @@ export type QueryDataResults = {
 }
 
 export type TimerProps = {
-    quizState: QuizStateProps
-    setQuizState: React.Dispatch<React.SetStateAction<QuizStateProps>>
+    isAnswered: boolean;
+    onTimeUp: () => void;
+    resetKey: number
 }
 
-export type AnswersProps = TimerProps
+export type AnswersProps = {
+    answers: Array<string>;
+    correctAnswer: string | undefined;
+    isAnswered: boolean;
+    onAnswer: (isCorrect: boolean) => void;
 
-export type CardProps = TimerProps & {
-    text: string;
 }
 
-export type NextQuizProps = TimerProps
+export type CardProps = {
+    answer: string;
+    correctAnswer: string | undefined;
+    // category: string;
+    onAnswer: (isCorrect: boolean) => void;
+    isAnswered: boolean
+}
+
+export type NextQuizProps = {
+    disabled: boolean;
+    onClick: () => void;
+}
+
+export type CategorySelectionProps = {
+    selectedCategory: number | null;
+    onCategoryChange: React.Dispatch<React.SetStateAction<number | null>>;
+    disabled: boolean
+}

@@ -1,51 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 import { getCategories } from '../utils/api';
-import type { CategoryDataResults, ScoreboardProps } from '../types/ScoreboardTypes';
-import { useEffect, useState } from 'react';
-import { decodeHtml } from '../utils/decodeHtml';
+import type { CategoryDataResults } from '../types/ScoreboardTypes';
+import { useState } from 'react';
 import { ArrowDownAZ, ArrowUpAZ } from 'lucide-react'
+import { useScore } from '../hooks/useScore';
 
-export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
-    const [filterState, setFilterState] = useState<'filtered' | 'inverted' | null>(null);
+export const Scoreboard = () => {
+    const [filterState, setFilterState] = useState<'filtered' | 'inverted' | null>('filtered');
 
     const { data: categories, isLoading, error, isRefetching } = useQuery<Array<CategoryDataResults>>({
         queryKey: ['categories'],
         queryFn: getCategories
     });
 
-    useEffect(() => {
-        if (!categories) return;
-
-        setQuizState(prev => {
-            let score = prev.score;
-
-            if (!score) {
-                score = localStorage.getItem('score')
-                    ? JSON.parse(localStorage.getItem('score')!)
-                    : {};
-            }
-
-            if (score) {
-                categories.forEach(category => {
-                    const decodedCategory = decodeHtml(category.name);
-                    if (!score[decodedCategory]) {
-                        score[decodedCategory] = { correct: 0, incorrect: 0 };
-                    }
-                });
-            }
-
-            return {
-                ...prev,
-                score: score
-            };
-        });
-    }, [categories, setQuizState]);
-
-    useEffect(() => {
-        if (quizState.score) {
-            localStorage.setItem('score', JSON.stringify(quizState.score))
-        }
-    }, [quizState.score])
+    const { score } = useScore();
 
     if (error) {
         return <span>Error fetching categories: {error.message}</span>
@@ -65,8 +33,7 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
             <table>
                 <thead>
                     <tr>
-                        <th onClick={
-                            () => {
+                        <th onClick={() => {
                                 if (!filterState) {
                                     categories?.sort((a, b) => {
                                         return a.name.localeCompare(b.name);
@@ -81,12 +48,11 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
                                 }
                                 categories?.sort((a, b) => a.id - b.id);
                                 return setFilterState(null);
-                            }
-                        }
+                            }}
                             className='relative cursor-pointer selection:bg-gray-700 selection:text-white'
-                        >
-                            {filterState === 'filtered' ? <span><ArrowUpAZ size={20} className='filterIcon' /></span> : 
-                            filterState === 'inverted' ? <span><ArrowDownAZ size={20} className='filterIcon' /></span> : null}Category
+                        >{filterState === 'filtered' ? <span><ArrowUpAZ size={20} className='filterIcon' /></span> :
+                            filterState === 'inverted' ? <span><ArrowDownAZ size={20} className='filterIcon' /></span> : null}
+                            Category
                         </th>
                         <th>Correct Answers</th>
                         <th>Wrong Answers</th>
@@ -97,9 +63,9 @@ export const Scoreboard = ({ quizState, setQuizState }: ScoreboardProps) => {
                     {categories && categories?.map((category) => {
                         return (<tr key={category.id}>
                             <td>{category.name}</td>
-                            {quizState.score && <><td className="text-green-400 border-white">{quizState.score[category.name].correct}</td>
-                                <td className="text-red-400 border-white">{quizState.score[category.name].incorrect}</td>
-                                <td>{quizState.score[category.name].correct + quizState.score[category.name].incorrect}</td></>}
+                            {score && <><td className="text-green-400 border-white">{score[category.name]?.correct ?? 0}</td>
+                                <td className="text-red-400 border-white">{score[category.name]?.incorrect ?? 0}</td>
+                                <td>{(score[category.name]?.correct + score[category.name]?.incorrect) || 0}</td></>}
                         </tr>)
                     })}
                 </tbody>

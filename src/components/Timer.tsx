@@ -1,55 +1,34 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { Timer } from 'lucide-react';
 import type { TimerProps } from '../types/QuizTypes';
-import { decodeHtml } from '../utils/decodeHtml';
 
-export const TimerComponent = ({quizState, setQuizState} : TimerProps) => {
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+export const TimerComponent = ({ isAnswered, onTimeUp, resetKey } : TimerProps) => {
+    const [timeLeft, setTimeLeft] = useState(15);
 
     useEffect(() => {
-        setQuizState((prev) => ({...prev, isAnswered: false}));
-        if (!timerRef.current) {
-            timerRef.current = setInterval(() => {
-                setQuizState((prev) => ({...prev, timer: prev.timer - 1}));
-            }, 1000)
-        }
+        if (isAnswered) return;
 
-        if (quizState.isAnswered && timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-            setQuizState((prev) => ({...prev, isAnswered: true}))
-        }
-
-        if (quizState.timer < 1 && timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-            setQuizState(prev => {
-                if (!prev.category || !prev.score) return prev;
-
-                const decodedCategory = decodeHtml(prev.category);
-                
-                return {...prev, isAnswered: true, 
-                score: { ...prev.score, 
-                    [decodedCategory]: { ...prev.score[decodedCategory], 
-                        incorrect: prev.score[decodedCategory].incorrect + 1
-                    }
+        const interval = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(interval);
+                    onTimeUp();
+                    return 0;
                 }
-            }});
-        }
+                return prev - 1;
+            })
+        }, 1000);
 
-        return () => {
-            if (timerRef.current)
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-            setQuizState((prev) => ({...prev, isAnswered: true}))
-        }
-    }, [quizState.timer, quizState.isAnswered, setQuizState])
+        return () => clearInterval(interval);
+    }, [isAnswered, onTimeUp]);
 
-
+    useEffect(() => {
+        setTimeLeft(15);
+    }, [resetKey]);
 
     return (
         <p className="timer"><Timer stroke="white" />
-        {quizState.timer}
+        {timeLeft}
         </p>
     )
 }

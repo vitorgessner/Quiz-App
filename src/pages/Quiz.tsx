@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Category } from '../components/Category';
 import { useQuery } from '@tanstack/react-query';
 import { Question } from '../components/Question';
@@ -6,58 +6,49 @@ import { Answers } from '../components/Answers'
 import { TimerComponent as Timer } from '../components/Timer';
 import { NextQuiz } from '../components/NextQuiz';
 import { getQuestion } from '../utils/api';
-import type { QuizStateProps, QueryDataResults } from '../types/QuizTypes';
+import type { QueryDataResults } from '../types/QuizTypes';
 import { Link } from 'react-router';
 import { ArrowLeft } from 'lucide-react'
 import { Scoreboard } from '../components/Scoreboard';
 import { CategorySelection } from '../components/CategorySelection';
+import { useScore } from '../hooks/useScore';
+import { transfromQuestion } from '../utils/transformQuestion';
 
 export default function Quiz() {
-    const [quizState, setQuizState] = useState<QuizStateProps>({
-        isAnswered: false,
-        isCorrect: null,
-        answers: [],
-        correct_answer: null,
-        category: null,
-        question: null,
-        questionNumber: 0,
-        timer: 15,
-        score: null,
-        categoryId: null,
-    });
+    const [isAnswered, setIsAnswered] = useState(false);
+    const [questionNumber, setQuestionNumber] = useState(0);
+    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
+    const { updateScore, resetScore } = useScore();
 
     const { data, isLoading, error, isRefetching } = useQuery<Array<QueryDataResults>>({
-        queryKey: ['question'],
-        queryFn: () => quizState.categoryId ? getQuestion(quizState.categoryId) : getQuestion()
+        queryKey: ['question', selectedCategory],
+        queryFn: async () => {
+            const results = selectedCategory ? await getQuestion(selectedCategory) : await getQuestion();
+            return results.map(transfromQuestion);
+        }
     })
 
-    const setAnswersArray = useCallback(() => {
-        let currentQuestion: QueryDataResults;
+    const currentQuestion = data?.[questionNumber];
+    const answers = useMemo(() => {
+        if (!currentQuestion) return [];
+        return [...currentQuestion.incorrect_answers, currentQuestion.correct_answer].sort();
+    }, [currentQuestion])
 
-        if (data) {
-            currentQuestion = data[quizState.questionNumber];
-            const answersArray: Array<string> | null = []
-            currentQuestion.incorrect_answers.map((answer: string) => {
-                answersArray.push(answer);
-            })
-            answersArray.push(currentQuestion.correct_answer);
-            answersArray.sort()
+    const handleAnswer = (isCorrect: boolean) => {
+        if (!currentQuestion) return;
+        setIsAnswered(true);
+        updateScore(currentQuestion.category, isCorrect)
+    };
 
-            if (quizState.answers.length === 0 && !quizState.correct_answer) {
-                setQuizState({
-                    ...quizState,
-                    category: currentQuestion.category,
-                    question: currentQuestion.question,
-                    answers: answersArray ?? [],
-                    correct_answer: currentQuestion.correct_answer
-                })
-            }
+    const handleNext = () => {
+        if (questionNumber >= 49) {
+            setQuestionNumber(0);
+        } else {
+            setQuestionNumber(prev => prev + 1);
         }
-    }, [data, quizState]);
-
-    console.log(quizState.categoryId)
-
-    setAnswersArray();
+        setIsAnswered(false);
+    }
 
     if (isRefetching) return <h2 className='text-center mt-5'>Loading questions...</h2>
 
@@ -70,16 +61,29 @@ export default function Quiz() {
             {data && (
                 <div className='mainDivContainer'>
                     <main className='main'>
-                        <Category quizState={quizState} />
-                        <Question quizState={quizState} />
-                        <Answers quizState={quizState} setQuizState={setQuizState} />
-                        <Timer quizState={quizState} setQuizState={setQuizState} />
-                        <NextQuiz quizState={quizState} setQuizState={setQuizState} />
-                        {quizState.isAnswered && <Link to="/" className="nextQuiz"><ArrowLeft size={15} /></Link>}
-                        <CategorySelection quizState={quizState} setQuizState={setQuizState}/>
+                        <Category category={currentQuestion?.category} />
+                        <Question question={currentQuestion?.question} />
+                        <Answers
+                            answers={answers}
+                            correctAnswer={currentQuestion?.correct_answer}
+                            isAnswered={isAnswered}
+                            onAnswer={handleAnswer} />
+                        <Timer
+                            isAnswered={isAnswered}
+                            onTimeUp={() => handleAnswer(false)}
+                            resetKey={questionNumber} />
+                        <NextQuiz
+                            disabled={!isAnswered}
+                            onClick={handleNext} />
+                        {isAnswered && <Link to="/" className="nextQuiz"><ArrowLeft size={15} /></Link>}
+                        <CategorySelection
+                            selectedCategory={selectedCategory}
+                            onCategoryChange={setSelectedCategory}
+                            disabled={!isAnswered} />
+                        <button className='border-2 p-2 rounded-md absolute left-2 bottom-2' onClick={resetScore}>Reset Score</button>
                     </main>
                     <aside className='md:mx-auto md:w-max xl:my-4'>
-                        <Scoreboard quizState={quizState} setQuizState={setQuizState}/>
+                        <Scoreboard />
                     </aside>
                 </div>
             )}

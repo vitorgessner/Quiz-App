@@ -1,55 +1,28 @@
 import type { AnswersProps, CardProps } from "../types/QuizTypes"
-import { decodeHtml } from "../utils/decodeHtml"
 
-export const Answers = ({ quizState, setQuizState }: AnswersProps) => {
+export const Answers = ({ answers, correctAnswer, isAnswered, onAnswer }: AnswersProps) => {
     return (
         <div className='grid grid-cols-2 gap-4'>
-            {quizState.answers.map((answer : string) => {
-                if (answer === quizState.correct_answer) return <Card key={answer} text={answer} quizState={quizState} setQuizState={setQuizState}/>
-                return <Card key={answer} text={answer} quizState={quizState} setQuizState={setQuizState}/>
+            {answers.map((answer: string) => {
+                return <Card key={answer} answer={answer} correctAnswer={correctAnswer} onAnswer={onAnswer} isAnswered={isAnswered} />
             }
             )}
         </div>
     )
 }
 
-const handleClick = ({text, quizState, setQuizState } : CardProps) => {
-    if (text === quizState.correct_answer) {
-        setQuizState(prev => { 
-            const category = prev.category && decodeHtml(prev.category);
-            if (!category) return prev;
-            if (!prev.score) return prev;
-
-            const categoryScore = prev.score[category] ?? {
-                correct: 0,
-                incorrect: 0
-            }
-            return {...prev, isAnswered: true, 
-            score: { ...prev.score, 
-                [category]: { ...categoryScore, 
-                    correct: categoryScore.correct + 1 } } }})
-    } else {
-        setQuizState(prev => { 
-            const category = prev.category && decodeHtml(prev.category);
-            if (!category) return prev;
-            if (!prev.score) return prev;
-
-            const categoryScore = prev.score[category] ?? {
-                correct: 0,
-                incorrect: 0
-            }
-            return {...prev, isAnswered: true, 
-            score: { ...prev.score, 
-                [category]: { ...categoryScore, 
-                    incorrect: categoryScore.incorrect + 1 } } }})
-    }
+const handleClick = ({ answer, correctAnswer, onAnswer }: { answer: string, correctAnswer: string, onAnswer: (isCorrect: boolean) => void }) => {
+    const isCorrect = answer === correctAnswer;
+    onAnswer(isCorrect);
 }
 
-const Card = ({ text, quizState, setQuizState }: CardProps) => {
-    const decodedString = decodeHtml(text);
+const Card = ({ answer, correctAnswer, onAnswer, isAnswered }: CardProps) => {
     return (
-        <article className={quizState.isAnswered ? (text === quizState.correct_answer ? 'border-green-500 opacity-70' : 'border-red-500 opacity-70') : 'border-gray-400'}>
-            <button className="cardButton" disabled={quizState.isAnswered} onClick={() => handleClick({ text, quizState, setQuizState })}>{decodedString}</button>
+        <article className={isAnswered ? (answer === correctAnswer ? 'border-green-500 opacity-70' : 'border-red-500 opacity-70') : 'border-gray-400'}>
+            <button className="cardButton" disabled={isAnswered} onClick={() => {
+                if (correctAnswer)
+                handleClick({ answer, correctAnswer, onAnswer })
+            }}>{answer}</button>
         </article>
     )
 }
