@@ -7,6 +7,6 @@ export const transfromQuestion = (raw: QueryDataResults) => {
         category: decodeHtml(raw.category),
         question: decodeHtml(raw.question),
         correct_answer: decodeHtml(raw.correct_answer),
-        incorrect_answer: raw.incorrect_answers.map(decodeHtml),
+        incorrect_answers: raw.incorrect_answers.map(decodeHtml),
     }
 }

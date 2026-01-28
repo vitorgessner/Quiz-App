@@ -23,10 +23,10 @@
         @apply border-3 rounded-md text-lg
     }
     th, td {
-        @apply  border-b rounded-md py-1 px-4 
+        @apply  border-b rounded-md py-1 px-2
     }
     table {
-        @apply md:w-max
+        @apply md:w-max text-sm md:text-base
     }
     thead {
         @apply [&>*:nth-child(odd)]:bg-gray-700
@@ -38,11 +38,11 @@
 
 @layer components {
     .filterIcon {
-        @apply inline top-4.5 md:top-1.5 absolute left-1.5
+        @apply inline top-4.5 sm:top-1.25 md:top-1.5 absolute left-1.5
     }
 
     .cardButton {
-        @apply bg-slate-700 hover:bg-slate-500 w-full text-left p-2 disabled:hover:bg-slate-700 disabled:cursor-default
+        @apply bg-slate-700 hover:bg-slate-500 w-full h-full text-left p-2 disabled:hover:bg-slate-700 hover:cursor-pointer disabled:cursor-default
         
     }
 
@@ -55,7 +55,7 @@
     }
 
     .mainDivContainer {
-        @apply mx-9 xl:flex xl:gap-4 xl:justify-between
+        @apply mx-5 sm:mx-9 xl:flex xl:gap-8 xl:justify-between
     }
 
     .nextQuiz {
@@ -63,6 +63,6 @@
     }
 
     .textCard {
-        @apply text-xl border-3 border-gray-400 rounded-md p-2 bg-slate-700
+        @apply max-w-fit md:max-w-158.5 border-3 border-gray-400 rounded-md p-2 bg-slate-700
     }
 }

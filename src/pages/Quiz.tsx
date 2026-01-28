@@ -80,10 +80,10 @@ export default function Quiz() {
                             selectedCategory={selectedCategory}
                             onCategoryChange={setSelectedCategory}
                             disabled={!isAnswered} />
-                        <button className='border-2 p-2 rounded-md absolute left-2 bottom-2' onClick={resetScore}>Reset Score</button>
                     </main>
                     <aside className='md:mx-auto md:w-max xl:my-4'>
                         <Scoreboard />
+                        <button className='border-2 p-2 mb-2 xl:mb-0 rounded-md xl:absolute xl:bottom-2 xl:left-105' onClick={resetScore}>Reset Score</button>
                     </aside>
                 </div>
             )}

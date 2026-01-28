@@ -28,8 +28,8 @@ export const Scoreboard = () => {
     }
 
     return (
-        <div className="my-4 w-fit rounded-md md:grow">
-            <span className='text-sm opacity-70 ml-1 block mb-1'>Click on the category header to filter alphabetically</span>
+        <div className="my-4 mx-auto rounded-md md:grow">
+            <span className='text-sm opacity-70 block mb-1'>Click on the category header to filter alphabetically</span>
             <table>
                 <thead>
                     <tr>

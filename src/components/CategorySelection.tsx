@@ -30,7 +30,7 @@ export const CategorySelection = ({ selectedCategory, onCategoryChange, disabled
     }
 
     return (
-        <label className="flex gap-2 mt-4 absolute bottom-3 left-35">Category: <select className="border-2 p-1 rounded-md bg-gray-950 cursor-pointer disabled:opacity-70 disabled:cursor-default w-full"
+        <label className="flex gap-2 mx-5 sm:mx-auto sm:max-w-fit absolute top-9 xl:bottom-3 xl:top-auto left-1 xl:left-2 right-2 xl:right-auto">Category: <select className="border-2 p-1 rounded-md bg-gray-950 cursor-pointer disabled:opacity-70 disabled:cursor-default w-full"
             onChange={handleCategoryChange}
             value={selectedCategory ?? ''}
             disabled={disabled}>
